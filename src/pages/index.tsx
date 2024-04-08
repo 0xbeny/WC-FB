@@ -7,8 +7,10 @@ import {
   erc20ABI,
   useAccount,
   useChainId,
+  useConfig,
   useContractRead,
   useContractWrite,
+  useNetwork,
 } from "wagmi";
 import ABI from "../abi.json";
 import { formatEther, getAddress, parseEther } from "viem";
@@ -16,14 +18,15 @@ export default function Home() {
   const [isNetworkSwitchHighlighted, setIsNetworkSwitchHighlighted] =
     useState(false);
   const [isConnectHighlighted, setIsConnectHighlighted] = useState(false);
-  const [mintAddress, setMintAddress] = useState<Address>();
   const closeAll = () => {
     setIsNetworkSwitchHighlighted(false);
     setIsConnectHighlighted(false);
   };
   const { address: connectedAddress } = useAccount();
   const chainID = useChainId();
-
+  const { chains } = useNetwork();
+  console.log({chains});
+  
   const myTokenAddress = (
     chainID === 50
       ? process.env.NEXT_PUBLIC_TOKEN
@@ -44,7 +47,7 @@ export default function Home() {
     functionName: "mint",
     args: [connectedAddress, parseEther("1")],
   });
-console.log({chainID});
+  console.log({ chainID });
 
   return (
     <>
@@ -106,7 +109,7 @@ console.log({chainID});
                 onClick={async () => {
                   write();
                 }}
-                className={styles['button-3']}
+                className={styles["button-3"]}
               >
                 Mint
               </button>
