@@ -6,6 +6,7 @@ import {
   Address,
   erc20ABI,
   useAccount,
+  useChainId,
   useContractRead,
   useContractWrite,
 } from "wagmi";
@@ -21,10 +22,17 @@ export default function Home() {
     setIsConnectHighlighted(false);
   };
   const { address: connectedAddress } = useAccount();
+  const chainID = useChainId();
+
+  const myTokenAddress = (
+    chainID === 50
+      ? process.env.NEXT_PUBLIC_TOKEN
+      : process.env.NEXT_PUBLIC_TOKEN_TEST
+  ) as Address;
 
   const { data: balance } = useContractRead({
     abi: ABI,
-    address: process.env.NEXT_PUBLIC_TOKEN as Address,
+    address: myTokenAddress,
     functionName: "balanceOf",
     args: [connectedAddress],
     watch: true,
@@ -32,10 +40,11 @@ export default function Home() {
 
   const { write } = useContractWrite({
     abi: ABI,
-    address: process.env.NEXT_PUBLIC_TOKEN as Address,
+    address: myTokenAddress,
     functionName: "mint",
     args: [connectedAddress, parseEther("1")],
   });
+console.log({chainID});
 
   return (
     <>
@@ -84,6 +93,7 @@ export default function Home() {
       <main className={styles.main}>
         {connectedAddress && (
           <>
+            <div>MyToken Contract Address: {myTokenAddress as Address}</div>
             <div>Connected Wallet: {connectedAddress as Address}</div>
             <div>
               MyToken Balance: {balance ? formatEther(balance as bigint) : 0}
@@ -96,6 +106,7 @@ export default function Home() {
                 onClick={async () => {
                   write();
                 }}
+                className={styles['button-3']}
               >
                 Mint
               </button>
