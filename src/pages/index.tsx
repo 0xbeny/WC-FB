@@ -25,8 +25,8 @@ export default function Home() {
   const { address: connectedAddress } = useAccount();
   const chainID = useChainId();
   const { chains } = useNetwork();
-  console.log({chains});
-  
+  console.log({ chains });
+
   const myTokenAddress = (
     chainID === 50
       ? process.env.NEXT_PUBLIC_TOKEN
@@ -96,6 +96,16 @@ export default function Home() {
       <main className={styles.main}>
         {connectedAddress && (
           <>
+            <div>
+              {chains.map(({ rpcUrls,id }) => (
+                <>
+                  <div>chainID {id}</div>
+                  <div>default: {rpcUrls.default.http[0]}</div>
+                  <div>public: {rpcUrls.public.http[0]}</div>
+                  <div>---</div>
+                </>
+              ))}
+            </div>
             <div>MyToken Contract Address: {myTokenAddress as Address}</div>
             <div>Connected Wallet: {connectedAddress as Address}</div>
             <div>
